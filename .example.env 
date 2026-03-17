@@ -1,0 +1,26 @@
+# Use this file as a template for your .env file, which you must create in root directory
+# The following properties are mandatory to keep exact same across all signatory parties
+
+# The threshold of signatories required to propagate an extrinsic(transaction) from multisig wallet
+MULTISIG_THRESHOLD=2
+
+# The subnet to interact with for staking
+SUBNET_ID=9
+
+# Addresses of all signatories in SS58 format
+SIGNATORY_A_ADDRESS=5Ha-ExampleAddress
+SIGNATORY_B_ADDRESS=5Hb-ExampleAddress
+SIGNATORY_C_ADDRESS=5Hc-ExampleAddress
+# Staking proxy wallet address
+STAKING_PROXY_ADDRESS=5Hd-ExampleAddress
+
+# Testnet RPC, change for mainnet
+RPC_URL=wss://test.finney.opentensor.ai
+
+# The following properties must be set by signatory owner prior any voting process
+SIGNATORY_A_SEED_PHRASE=12 words seed phrase
+SIGNATORY_B_SEED_PHRASE=12 words seed phrase
+SIGNATORY_C_SEED_PHRASE=12 words seed phrase
+
+# Not taling part in voting, can be used by proxy owner for testing purposes
+STAKING_PROXY_SEED_PHRASE=12 words seed phrase

@@ -1,0 +1,27 @@
+{
+  "name": "tao-multisig-ops",
+  "version": "1.0.0",
+  "description": "Minimalistic JS repository for Tao multisig operations",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "multisig_address": "node src/generate-multisig-address.js",
+    "multisig_balance": "node src/multisig-balance.js",
+    "multisig_proxies": "node src/check-proxies.js",
+    "vote_proxy_A": "node src/vote-proxy.js A",
+    "vote_proxy_B": "node src/vote-proxy.js B",
+    "vote_proxy_C": "node src/vote-proxy.js C",
+    "vote_register_A": "node src/vote-register-wallet.js A",
+    "vote_register_B": "node src/vote-register-wallet.js B",
+    "vote_register_C": "node src/vote-register-wallet.js C",
+    "vote_transfer_A": "node src/vote-transfer.js A",
+    "vote_transfer_B": "node src/vote-transfer.js B",
+    "vote_transfer_C": "node src/vote-transfer.js C",
+    "proxy_execute": "node src/proxy-execute.js"
+  },
+  "dependencies": {
+    "@polkadot/api": "^16.4.8",
+    "@polkadot/keyring": "^13.5.6",
+    "dotenv": "^17.3.1"
+  }
+}
