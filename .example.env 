@@ -4,8 +4,8 @@
 # The threshold of signatories required to propagate an extrinsic(transaction) from multisig wallet
 MULTISIG_THRESHOLD=2
 
-# The subnet to interact with for staking
-SUBNET_ID=9
+# The subnet ID number to interact with for staking
+SUBNET_ID=
 
 # Addresses of all signatories in SS58 format
 SIGNATORY_A_ADDRESS=5Ha-ExampleAddress
