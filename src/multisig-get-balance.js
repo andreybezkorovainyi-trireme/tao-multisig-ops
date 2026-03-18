@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { generateMultisigAddress } from './multisig-generate-address.js';
 import { validateEnv } from './validate-env.js';
-import { generateMultisigAddress } from './generate-multisig-address.js';
 
 async function multisigBalance() {
   const env = validateEnv();

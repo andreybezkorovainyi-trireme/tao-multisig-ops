@@ -1,7 +1,7 @@
 import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
-import { validateEnv, validateSeedPhrase } from './validate-env.js';
 import { sortAddresses } from '@polkadot/util-crypto';
-import { generateMultisigAddress } from './generate-multisig-address.js';
+import { generateMultisigAddress } from './multisig-generate-address.js';
+import { validateEnv, validateSeedPhrase } from './validate-env.js';
 
 // Get argument from command line
 const signatoryId = process.argv[2];

@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export function validateEnv() {
+  console.log('Validating environment variables...');
+
   const {
     RPC_URL,
     MULTISIG_THRESHOLD,

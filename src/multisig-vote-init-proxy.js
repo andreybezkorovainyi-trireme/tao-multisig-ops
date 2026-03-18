@@ -1,7 +1,7 @@
 import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
-import { validateEnv, validateSeedPhrase } from './validate-env.js';
 import { sortAddresses } from '@polkadot/util-crypto';
-import { generateMultisigAddress } from './generate-multisig-address.js';
+import { generateMultisigAddress } from './multisig-generate-address.js';
+import { validateEnv, validateSeedPhrase } from './validate-env.js';
 
 // Get argument from command line
 const signatoryId = process.argv[2];
@@ -14,13 +14,8 @@ if (!['A', 'B', 'C'].includes(signatoryId)) {
 
 async function voteProxy() {
   const env = validateEnv();
-  const {
-    rpcUrl,
-    threshold,
-    signatories,
-    stakingProxyAddress,
-  } = env;
-  
+  const { rpcUrl, threshold, signatories, stakingProxyAddress } = env;
+
   const seedPhraseKey = `signatory${signatoryId}SeedPhrase`;
   const mySeedPhrase = env[seedPhraseKey];
   validateSeedPhrase(mySeedPhrase);
@@ -33,10 +28,10 @@ async function voteProxy() {
   const keyring = new Keyring({ type: 'sr25519' });
 
   const myKeyring = keyring.addFromMnemonic(mySeedPhrase);
-  
+
   // Array of other signatories (sorted)
   const myAddress = env[`signatory${signatoryId}`];
-  const otherSignatories = sortAddresses(signatories.filter(addr => addr !== myAddress));
+  const otherSignatories = sortAddresses(signatories.filter((addr) => addr !== myAddress));
 
   console.log(`👤 Voting as: ${myAddress} (Signatory ${signatoryId})`);
   console.log(`🏘️ Multisig Address: ${multisigAddress}`);
@@ -47,43 +42,42 @@ async function voteProxy() {
 
   // Check if there is an active proposal for this call
   const multisigEntries = await api.query.multisig.multisigs(multisigAddress, callHash);
-  
+
   let tx;
-  
+
   if (multisigEntries.isEmpty) {
     console.log(`📝 No active proposal found. INITIATING new proposal...`);
     // First vote -> timepoint is null, maxWeight is { refTime: 0, proofSize: 0 }
-    tx = api.tx.multisig.asMulti(
-      threshold,
-      otherSignatories,
-      null, 
-      addProxyCall.method.toHex(),
-      { refTime: 0, proofSize: 0 }
-    );
+    tx = api.tx.multisig.asMulti(threshold, otherSignatories, null, addProxyCall.method.toHex(), {
+      refTime: 0,
+      proofSize: 0,
+    });
   } else {
     // There is an active proposal, let's JOIN it
     const info = multisigEntries.unwrap();
-    
+
     // Check if we already voted
-    const hasVoted = info.approvals.some(a => a.toString() === myAddress);
+    const hasVoted = info.approvals.some((a) => a.toString() === myAddress);
     if (hasVoted) {
       console.log(`❌ You have already voted for this proposal!`);
       process.exit(0);
     }
-    
+
     const approvalsCount = info.approvals.length;
     console.log(`✅ Found active proposal! Current approvals: ${approvalsCount}/${threshold}`);
-    
+
     // If our vote will hit the threshold, we need the exact weight of the call
     let maxWeight;
-    const willExecute = (approvalsCount + 1) >= threshold;
-    
+    const willExecute = approvalsCount + 1 >= threshold;
+
     if (willExecute) {
       console.log(`💥 This vote will EXECUTE the proposal. Calculating actual weight...`);
       const callInfo = await addProxyCall.paymentInfo(myAddress);
       maxWeight = callInfo.weight;
     } else {
-      console.log(`➕ This vote will APPROVE the proposal (but more votes needed). Set weight to 0.`);
+      console.log(
+        `➕ This vote will APPROVE the proposal (but more votes needed). Set weight to 0.`,
+      );
       maxWeight = { refTime: 0, proofSize: 0 };
     }
 
@@ -92,13 +86,13 @@ async function voteProxy() {
       otherSignatories,
       info.when, // Timepoint of the very first transaction
       addProxyCall.method.toHex(),
-      maxWeight
+      maxWeight,
     );
   }
 
   console.log(`✍️ Signing and sending transaction...`);
   console.log(`🔗 Transaction Hash: ${tx.hash.toHex()}`);
-  
+
   await tx.signAndSend(myKeyring, ({ status, events, dispatchError }) => {
     if (status.isInBlock) {
       console.log(`✔️ Transaction included in block: ${status.asInBlock}`);
@@ -116,10 +110,10 @@ async function voteProxy() {
         process.exit(1);
       } else {
         // Look through events to see if MultisigExecution happened
-        const isExecuted = events.some(({ event }) => 
-          api.events.multisig.MultisigExecuted.is(event)
+        const isExecuted = events.some(({ event }) =>
+          api.events.multisig.MultisigExecuted.is(event),
         );
-        
+
         if (isExecuted) {
           console.log('🎉 PROXY HAS BEEN SUCCESSFULLY ADDED TO MULTISIG!');
         } else {

@@ -1,8 +1,8 @@
 import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
-import { validateEnv, validateSeedPhrase } from './validate-env.js';
-import { generateMultisigAddress } from './generate-multisig-address.js';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { config } from 'dotenv';
+import { generateMultisigAddress } from './multisig-generate-address.js';
+import { validateEnv, validateSeedPhrase } from './validate-env.js';
 
 config();
 
