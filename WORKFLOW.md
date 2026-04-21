@@ -10,6 +10,20 @@ In this setup, there are three participants (signatories), each generating their
 2. **Signatory B**
 3. **Signatory C**
 
+# Balance Requirements
+
+Before executing any multisig operations, ensure the following wallets have sufficient TAO:
+
+| Wallet | Required balance | Why |
+|--------|-----------------|-----|
+| **Signatory who initiates** (first vote) | ≥ 0.196 TAO free | Substrate reserves `DepositBase (0.132) + DepositFactor × 2 (0.064)` from the initiator's account. Returned after proposal executes. |
+| **Signatories who join** (subsequent votes) | ~0.001 TAO | Only tx fees. No deposit required. |
+| **Multisig wallet** | ≥ ~0.093 TAO free | Required for adding a proxy (`ProxyDepositBase + ProxyDepositFactor`). Locked until proxy is removed. |
+
+> **Tip:** Run `npm run check_deposits` to see exact on-chain deposit constants and whether each wallet currently meets the requirements.
+
+> ⚠️ **Only the initiator pays the proposal deposit.** If your balance is too low to initiate, ask another signatory with sufficient funds to run the `_A`, `_B`, or `_C` variant first — then join with your own script.
+
 # Suggested Workflow
 
 ## 1. Adding a "Staking" Proxy
