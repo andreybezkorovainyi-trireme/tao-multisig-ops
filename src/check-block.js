@@ -1,8 +1,8 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { validateEnv } from './validate-env.js';
+import { Env } from './validate-env.js';
 
 async function checkBlock() {
-  const { rpcUrl } = validateEnv();
+  const { rpcUrl } = Env;
   const provider = new WsProvider(rpcUrl);
   const api = await ApiPromise.create({ provider });
 
@@ -26,7 +26,7 @@ async function checkBlock() {
         if (api.events.multisig.MultisigExecuted.is(event)) {
           console.log(`\nFound MultisigExecuted Event!`);
           const [approving, timepoint, multisig, callHash, result] = event.data;
-          
+
           if (result.isOk) {
             console.log('✅ Inner call succeeded.');
           } else {
@@ -51,7 +51,7 @@ async function checkBlock() {
     console.log(`\n--- Proxy Deposit Constants ---`);
     console.log(`ProxyDepositBase: ${proxyDepositBase.toHuman()} (${proxyDepositBase.toString()} RAO)`);
     console.log(`ProxyDepositFactor: ${proxyDepositFactor.toHuman()} (${proxyDepositFactor.toString()} RAO)`);
-    
+
     const requiredDeposit = proxyDepositBase.add(proxyDepositFactor);
     console.log(`Required Deposit for 1 proxy: ${requiredDeposit.toHuman()} (${requiredDeposit.toString()} RAO = ${requiredDeposit.toNumber() / 1e9} TAO)`);
 

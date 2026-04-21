@@ -1,7 +1,7 @@
 import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
 import { sortAddresses } from '@polkadot/util-crypto';
 import { generateMultisigAddress } from './multisig-generate-address.js';
-import { validateEnv, validateSeedPhrase } from './validate-env.js';
+import { Env, validateSeedPhrase } from './validate-env.js';
 
 // Get argument from command line
 const signatoryId = process.argv[2];
@@ -13,11 +13,10 @@ if (!['A', 'B', 'C'].includes(signatoryId)) {
 }
 
 async function voteProxy() {
-  const env = validateEnv();
-  const { rpcUrl, threshold, signatories, stakingProxyAddress } = env;
+  const { rpcUrl, threshold, signatories, stakingProxyAddress } = Env;
 
   const seedPhraseKey = `signatory${signatoryId}SeedPhrase`;
-  const mySeedPhrase = env[seedPhraseKey];
+  const mySeedPhrase = Env[seedPhraseKey];
   validateSeedPhrase(mySeedPhrase);
 
   const multisigAddress = generateMultisigAddress(signatories, threshold);
@@ -30,11 +29,10 @@ async function voteProxy() {
   const myKeyring = keyring.addFromMnemonic(mySeedPhrase);
 
   // Array of other signatories (sorted)
-  const myAddress = env[`signatory${signatoryId}`];
+  const myAddress = Env[`signatory${signatoryId}`];
   const otherSignatories = sortAddresses(signatories.filter((addr) => addr !== myAddress));
 
   console.log(`👤 Voting as: ${myAddress} (Signatory ${signatoryId})`);
-  console.log(`🏘️ Multisig Address: ${multisigAddress}`);
 
   // Base call we want to execute via Multisig
   const addProxyCall = api.tx.proxy.addProxy(stakingProxyAddress, 'Staking', 0);

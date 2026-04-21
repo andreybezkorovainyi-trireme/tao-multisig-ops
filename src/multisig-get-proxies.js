@@ -1,12 +1,11 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { generateMultisigAddress } from './multisig-generate-address.js';
-import { validateEnv } from './validate-env.js';
+import { Env } from './validate-env.js';
 
 async function checkProxies() {
-  const { rpcUrl, signatories, threshold, stakingProxyAddress } = validateEnv();
+  const { rpcUrl, signatories, threshold, stakingProxyAddress } = Env;
 
   const address = generateMultisigAddress(signatories, threshold);
-  console.log(`Checking proxies for Multisig Address: ${address}`);
   console.log(`Expected Proxy Address: ${stakingProxyAddress}`);
 
   const provider = new WsProvider(rpcUrl);

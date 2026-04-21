@@ -1,10 +1,7 @@
 import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
 import { sortAddresses } from '@polkadot/util-crypto';
-import { config } from 'dotenv';
 import { generateMultisigAddress } from './multisig-generate-address.js';
-import { validateEnv, validateSeedPhrase } from './validate-env.js';
-
-config();
+import { Env, validateSeedPhrase } from './validate-env.js';
 
 // Get arguments from command line
 const signatoryId = process.argv[2];
@@ -30,11 +27,10 @@ if (
 const amountRao = BigInt(Math.floor(parseFloat(amountStr) * 1e9));
 
 async function voteTransfer() {
-  const env = validateEnv();
-  const { rpcUrl, threshold, signatories, subnetId } = env;
+  const { rpcUrl, threshold, signatories, subnetId } = Env;
 
   const seedPhraseKey = `signatory${signatoryId}SeedPhrase`;
-  const mySeedPhrase = env[seedPhraseKey];
+  const mySeedPhrase = Env[seedPhraseKey];
   validateSeedPhrase(mySeedPhrase);
 
   const multisigAddress = generateMultisigAddress(signatories, threshold);
@@ -47,11 +43,10 @@ async function voteTransfer() {
   const myKeyring = keyring.addFromMnemonic(mySeedPhrase);
 
   // Array of other signatories (sorted)
-  const myAddress = env[`signatory${signatoryId}`];
+  const myAddress = Env[`signatory${signatoryId}`];
   const otherSignatories = sortAddresses(signatories.filter((addr) => addr !== myAddress));
 
   console.log(`👤 Voting as: ${myAddress} (Signatory ${signatoryId})`);
-  console.log(`🏘️ Multisig Address: ${multisigAddress}`);
   console.log(`➡️ Destination: ${destinationAddress}`);
   console.log(`💸 Amount: ${amountStr} ${currencyType} (${amountRao.toString()} RAO equiv)`);
 

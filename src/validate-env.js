@@ -2,7 +2,7 @@ import { isAddress, sortAddresses } from '@polkadot/util-crypto';
 import dotenv from 'dotenv';
 dotenv.config();
 
-export function validateEnv() {
+function validateEnv() {
   console.log('Validating environment variables...');
 
   const {
@@ -59,6 +59,8 @@ export function validateEnv() {
     stakingProxySeedPhrase: STAKING_PROXY_SEED_PHRASE,
   };
 }
+
+export const Env = validateEnv();
 
 export function validateSeedPhrase(seedPhrase) {
   if (!seedPhrase || seedPhrase.split(' ').length !== 12) {

@@ -1,10 +1,7 @@
 import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
-import { config } from 'dotenv';
 import { generateMultisigAddress } from './multisig-generate-address.js';
-import { validateEnv, validateSeedPhrase } from './validate-env.js';
-
-config();
+import { Env, validateSeedPhrase } from './validate-env.js';
 
 // Get argument from command line
 const action = process.argv[2];
@@ -20,8 +17,7 @@ const amountRao = BigInt(Math.floor(parseFloat(amountStr) * 1e9));
 
 async function proxyExecute() {
   await cryptoWaitReady();
-  const env = validateEnv();
-  const { rpcUrl, threshold, signatories, subnetId, stakingProxySeedPhrase } = env;
+  const { rpcUrl, threshold, signatories, subnetId, stakingProxySeedPhrase } = Env;
   validateSeedPhrase(stakingProxySeedPhrase);
 
   const multisigAddress = generateMultisigAddress(signatories, threshold);
@@ -34,7 +30,6 @@ async function proxyExecute() {
   const proxyWallet = keyring.addFromMnemonic(stakingProxySeedPhrase);
 
   console.log(`👤 Proxy Wallet (Delegate): ${proxyWallet.address}`);
-  console.log(`🏘️ Multisig Address (Real): ${multisigAddress}`);
   console.log(`📡 Target Subnet: ${subnetId}`);
   console.log(`💸 Amount: ${amountStr} TAO (${amountRao.toString()} RAO)`);
   console.log(`🛠️ Action: ${action.toUpperCase()}`);

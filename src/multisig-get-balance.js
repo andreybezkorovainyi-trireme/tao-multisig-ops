@@ -1,13 +1,10 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { generateMultisigAddress } from './multisig-generate-address.js';
-import { validateEnv } from './validate-env.js';
+import { Env } from './validate-env.js';
 
 async function multisigBalance() {
-  const env = validateEnv();
-  const { rpcUrl, threshold, signatories, subnetId } = env;
+  const { rpcUrl, threshold, signatories, subnetId } = Env;
   const multisigAddress = generateMultisigAddress(signatories, threshold);
-
-  console.log(`Checking balance for Multisig Address: ${multisigAddress}`);
 
   const provider = new WsProvider(rpcUrl);
   const api = await ApiPromise.create({ provider });

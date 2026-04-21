@@ -1,6 +1,6 @@
 import { Keyring } from '@polkadot/api';
 import { createKeyMulti } from '@polkadot/util-crypto';
-import { validateEnv } from './validate-env.js';
+import { Env } from './validate-env.js';
 
 /**
  * Creates a multisig address for Bittensor network (ss58Format: 42)
@@ -12,7 +12,7 @@ export function generateMultisigAddress(_signatories, _threshold) {
   const { signatories, threshold } =
     _signatories && _threshold
       ? { signatories: _signatories, threshold: _threshold }
-      : validateEnv();
+      : Env;
 
   const keyring = new Keyring({ type: 'sr25519', ss58Format: 42 }); // Format Bittensor - 42
 
