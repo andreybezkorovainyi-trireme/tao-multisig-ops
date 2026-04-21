@@ -56,6 +56,7 @@ This repository provides a complete suite of Node.js scripts to manage a Bittens
 - `npm run multisig_address`: Generates and prints the derived multisig address based on the signatories and threshold in your `.env`.
 - `npm run multisig_balance`: Queries the network for the current TAO balance and Alpha balance (in the configured `SUBNET_ID`) of the multisig wallet.
 - `npm run multisig_proxies`: Checks if the multisig wallet has any proxies assigned to it.
+- `npm run check_deposits`: Diagnoses whether each signatory has enough TAO to initiate a multisig proposal (requires `DepositBase + DepositFactor × otherSignatories`), and whether the multisig wallet itself has enough TAO to add a proxy. Useful for troubleshooting `balances.InsufficientBalance` errors.
 
 ### Proxy Execution
 

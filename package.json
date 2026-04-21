@@ -17,7 +17,8 @@
     "vote_transfer_A": "node src/multisig-vote-transfer.js A",
     "vote_transfer_B": "node src/multisig-vote-transfer.js B",
     "vote_transfer_C": "node src/multisig-vote-transfer.js C",
-    "proxy_execute": "node src/proxy-execute.js"
+    "proxy_execute": "node src/proxy-execute.js",
+    "check_deposits": "node src/multisig-check-deposits.js"
   },
   "dependencies": {
     "@polkadot/api": "^16.4.8",
