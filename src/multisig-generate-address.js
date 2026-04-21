@@ -23,5 +23,3 @@ export function generateMultisigAddress(_signatories, _threshold) {
   console.log(`Multisig address: ${address}`);
   return address;
 }
-
-generateMultisigAddress();

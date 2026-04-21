@@ -24,7 +24,9 @@ async function checkDeposits() {
     console.log(`- DepositFactor: ${depositFactor} RAO  (${Number(depositFactor) / 1e9} TAO)`);
     console.log(`- Other signatories: ${numOtherSignatories}`);
     console.log(`\n💰 Required deposit to INITIATE a proposal:`);
-    console.log(`  DepositBase + DepositFactor * ${numOtherSignatories} = ${requiredDeposit} RAO  (${Number(requiredDeposit) / 1e9} TAO)`);
+    console.log(
+      `  DepositBase + DepositFactor * ${numOtherSignatories} = ${requiredDeposit} RAO  (${Number(requiredDeposit) / 1e9} TAO)`,
+    );
 
     const addresses = { A: signatoryA, B: signatoryB, C: signatoryC };
 
@@ -39,7 +41,9 @@ async function checkDeposits() {
       console.log(`\n  Signatory ${id}: ${address}`);
       console.log(`    Free:     ${free} RAO  (${Number(free) / 1e9} TAO)`);
       console.log(`    Reserved: ${reserved} RAO  (${Number(reserved) / 1e9} TAO)`);
-      console.log(`    Can initiate proposal: ${canAfford ? '✅ YES' : '❌ NO — needs at least ' + Number(requiredDeposit) / 1e9 + ' TAO free'}`);
+      console.log(
+        `    Can initiate proposal: ${canAfford ? '✅ YES' : '❌ NO — needs at least ' + Number(requiredDeposit) / 1e9 + ' TAO free'}`,
+      );
     }
 
     // Proxy pallet constants
@@ -48,20 +52,27 @@ async function checkDeposits() {
     const requiredProxyDeposit = proxyDepositBase + proxyDepositFactor * 1n;
 
     console.log(`\n🔑 Proxy Pallet Constants:`);
-    console.log(`- ProxyDepositBase:   ${proxyDepositBase} RAO  (${Number(proxyDepositBase) / 1e9} TAO)`);
-    console.log(`- ProxyDepositFactor: ${proxyDepositFactor} RAO  (${Number(proxyDepositFactor) / 1e9} TAO)`);
+    console.log(
+      `- ProxyDepositBase:   ${proxyDepositBase} RAO  (${Number(proxyDepositBase) / 1e9} TAO)`,
+    );
+    console.log(
+      `- ProxyDepositFactor: ${proxyDepositFactor} RAO  (${Number(proxyDepositFactor) / 1e9} TAO)`,
+    );
     console.log(`\n💰 Required deposit to ADD 1 proxy:`);
-    console.log(`  ProxyDepositBase + ProxyDepositFactor * 1 = ${requiredProxyDeposit} RAO  (${Number(requiredProxyDeposit) / 1e9} TAO)`);
+    console.log(
+      `  ProxyDepositBase + ProxyDepositFactor * 1 = ${requiredProxyDeposit} RAO  (${Number(requiredProxyDeposit) / 1e9} TAO)`,
+    );
 
     const { data: msigBalance } = await api.query.system.account(multisigAddress);
     const msigFree = msigBalance.free.toBigInt();
     const msigReserved = msigBalance.reserved.toBigInt();
     const canAddProxy = msigFree >= requiredProxyDeposit;
 
-    console.log(`\n🏘️  Multisig Address: ${multisigAddress}`);
     console.log(`    Free:     ${msigFree} RAO  (${Number(msigFree) / 1e9} TAO)`);
     console.log(`    Reserved: ${msigReserved} RAO  (${Number(msigReserved) / 1e9} TAO)`);
-    console.log(`    Can add proxy: ${canAddProxy ? '✅ YES' : '❌ NO — needs at least ' + Number(requiredProxyDeposit) / 1e9 + ' TAO free'}`);
+    console.log(
+      `    Can add proxy: ${canAddProxy ? '✅ YES' : '❌ NO — needs at least ' + Number(requiredProxyDeposit) / 1e9 + ' TAO free'}`,
+    );
   } finally {
     await provider.disconnect();
     process.exit(0);
