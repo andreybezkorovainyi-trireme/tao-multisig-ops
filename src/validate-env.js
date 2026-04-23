@@ -17,6 +17,7 @@ function validateEnv() {
     STAKING_PROXY_ADDRESS,
     STAKING_PROXY_SEED_PHRASE,
     SUBNET_ID,
+    VALIDATOR_HOTKEY_ADDRESS,
   } = process.env;
 
   if (isNaN(MULTISIG_THRESHOLD)) {
@@ -57,6 +58,8 @@ function validateEnv() {
 
     stakingProxyAddress: STAKING_PROXY_ADDRESS,
     stakingProxySeedPhrase: STAKING_PROXY_SEED_PHRASE,
+
+    validatorHotkeyAddress: VALIDATOR_HOTKEY_ADDRESS,
   };
 }
 

@@ -137,18 +137,29 @@ async function voteTransfer() {
         }
         process.exit(1);
       } else {
-        // Look through events to see if MultisigExecution happened
-        const isExecuted = events.some(({ event }) =>
+        const executedEvent = events.find(({ event }) =>
           api.events.multisig.MultisigExecuted.is(event),
         );
 
-        if (isExecuted) {
-          console.log(
-            `🎉 TRANSFER OF ${amountStr} ${currencyType} TO ${destinationAddress} HAS BEEN SUCCESSFULLY EXECUTED!`,
-          );
-        } else {
-          console.log('🎉 Vote successfully recorded! Waiting for more signatures.');
+        if (executedEvent) {
+          const result = executedEvent.event.data[4];
+          if (result.isOk) {
+            console.log(
+              `🎉 TRANSFER OF ${amountStr} ${currencyType} TO ${destinationAddress} HAS BEEN SUCCESSFULLY EXECUTED!`,
+            );
+          } else {
+            const err = result.asErr;
+            if (err.isModule) {
+              const decoded = api.registry.findMetaError(err.asModule);
+              console.error(`❌ Inner call failed: ${decoded.section}.${decoded.name}: ${decoded.docs.join(' ')}`);
+            } else {
+              console.error(`❌ Inner call failed: ${err.toString()}`);
+            }
+          }
+          process.exit(0);
         }
+
+        console.log('🎉 Vote successfully recorded! Waiting for more signatures.');
         process.exit(0);
       }
     } else {

@@ -17,7 +17,7 @@ const amountRao = BigInt(Math.floor(parseFloat(amountStr) * 1e9));
 
 async function proxyExecute() {
   await cryptoWaitReady();
-  const { rpcUrl, threshold, signatories, subnetId, stakingProxySeedPhrase } = Env;
+  const { rpcUrl, threshold, signatories, subnetId, stakingProxySeedPhrase, validatorHotkeyAddress } = Env;
   validateSeedPhrase(stakingProxySeedPhrase);
 
   const multisigAddress = generateMultisigAddress(signatories, threshold);
@@ -29,6 +29,9 @@ async function proxyExecute() {
   const keyring = new Keyring({ type: 'sr25519' });
   const proxyWallet = keyring.addFromMnemonic(stakingProxySeedPhrase);
 
+  const validatorHotkey = validatorHotkeyAddress ?? multisigAddress;
+  console.log('Validator Hotkey:', validatorHotkey);
+
   console.log(`👤 Proxy Wallet (Delegate): ${proxyWallet.address}`);
   console.log(`📡 Target Subnet: ${subnetId}`);
   console.log(`💸 Amount: ${amountStr} TAO (${amountRao.toString()} RAO)`);
@@ -38,10 +41,10 @@ async function proxyExecute() {
   let innerTx;
   if (action === 'stake') {
     // arguments: hotkey (multisig itself), netuid, amount
-    innerTx = api.tx.subtensorModule.addStake(multisigAddress, subnetId, amountRao);
+    innerTx = api.tx.subtensorModule.addStake(validatorHotkey, subnetId, amountRao);
   } else {
     // arguments: hotkey (multisig itself), netuid, amount
-    innerTx = api.tx.subtensorModule.removeStake(multisigAddress, subnetId, amountRao);
+    innerTx = api.tx.subtensorModule.removeStake(validatorHotkey, subnetId, amountRao);
   }
 
   // Wrap inner call inside a proxy call

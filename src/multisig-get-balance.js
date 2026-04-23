@@ -12,34 +12,67 @@ async function multisigBalance() {
   try {
     const { data: balance } = await api.query.system.account(multisigAddress);
 
-    // Fetch Alpha balance for the subnet
-    const alphaBalanceRaw = await api.query.subtensorModule.alpha(
-      multisigAddress,
-      multisigAddress,
-      subnetId,
-    );
-    const fixed128Divisor = BigInt('18446744073709551616'); // 2^64
-    const alphaRawBigInt = BigInt(alphaBalanceRaw.bits?.toString() || '0');
-    const alphaActual = alphaRawBigInt / fixed128Divisor;
-    const alphaBalance = Number(alphaActual) / 1e9;
+    const free = balance.free.toBigInt();
+    const reserved = balance.reserved.toBigInt();
+    const frozen = (balance.frozen ?? balance.miscFrozen)?.toBigInt() ?? 0n;
+    const untouchable = frozen > reserved ? frozen : reserved;
+    const liquid = free > untouchable ? free - untouchable : 0n;
 
-    console.log(`\n💰 Balance Info:`);
-    console.log(`- Free (Available): ${balance.free.toHuman()}`);
-    console.log(`- Reserved: ${balance.reserved.toHuman()}`);
+    console.log(`\n💰 TAO Balance:`);
+    console.log(`- Free (total):          ${Number(free) / 1e9} TAO`);
+    console.log(`- Reserved (proxy/etc):  ${Number(reserved) / 1e9} TAO`);
+    console.log(`- Frozen:                ${Number(frozen) / 1e9} TAO`);
+    console.log(`- Liquid (transferable): ${Number(liquid) / 1e9} TAO  ← use this for transfers`);
 
-    // Convert to readable tao (1 TAO = 10^9 RAO)
-    const freeTao = balance.free.toNumber() / 1e9;
-    console.log(`\nFree Balance in TAO: ${freeTao} TAO`);
-    console.log(`Alpha Balance in Subnet ${subnetId}: ${alphaBalance.toFixed(9)} Alpha`);
-
-    if (freeTao === 0) {
-      console.log(
-        `\n⚠️ WARNING: Multisig has 0 TAO. Transactions like 'addProxy' require adding a deposit to the reserved balance.`,
-      );
-      console.log(
-        `You need to send TAO to this Multisig Address: ${multisigAddress} before it can act.`,
-      );
+    if (free === 0n) {
+      console.log(`\n⚠️ WARNING: Multisig has 0 TAO.`);
     }
+
+    // Query all stake positions for this coldkey via Runtime API (same approach as btcli)
+    console.log(`\n📊 Alpha Staked (StakeInfoRuntimeApi):`);
+    const stakeInfosCodec =
+      await api.call.stakeInfoRuntimeApi.getStakeInfoForColdkey(multisigAddress);
+    const stakeInfos = stakeInfosCodec.toJSON();
+
+    if (!Array.isArray(stakeInfos) || stakeInfos.length === 0) {
+      console.log(`   none`);
+    } else {
+      // Group by netuid
+      const bySubnet = new Map();
+      for (const info of stakeInfos) {
+        const netuid = info.netuid ?? info[3];
+        const stakeRao = BigInt(info.stake ?? info[2] ?? '0');
+        const hotkey = info.hotkey ?? info[0];
+        if (!bySubnet.has(netuid)) bySubnet.set(netuid, []);
+        bySubnet.get(netuid).push({ hotkey, stakeRao });
+      }
+
+      for (const [netuid, positions] of [...bySubnet.entries()].sort((a, b) => a[0] - b[0])) {
+        const total = positions.reduce((s, p) => s + p.stakeRao, 0n);
+        console.log(`  Subnet ${netuid}:  ${Number(total) / 1e9} Alpha total`);
+        for (const { hotkey, stakeRao } of positions) {
+          const label = hotkey === multisigAddress ? '(self)' : '';
+          console.log(`    └─ hotkey ${hotkey} ${label}: ${Number(stakeRao) / 1e9} Alpha`);
+        }
+      }
+
+      const targetSubnetPositions = stakeInfos.filter(
+        (info) => (info.netuid ?? info[3]) === subnetId,
+      );
+      const totalForSubnet = targetSubnetPositions.reduce(
+        (s, info) => s + BigInt(info.stake ?? info[2] ?? '0'),
+        0n,
+      );
+      console.log(`\n  → Subnet ${subnetId} total: ${Number(totalForSubnet) / 1e9} Alpha`);
+    }
+
+    // Check subnet registration
+    try {
+      const isRegistered = await api.query.subtensorModule.isNetworkMember(multisigAddress, subnetId);
+      if (isRegistered.isTrue) {
+        console.log(`\n⚠️  Registered in subnet ${subnetId}: transfers capped at liquid = ${Number(liquid) / 1e9} TAO`);
+      }
+    } catch { /* ignore */ }
   } catch (error) {
     console.error('Error checking balance:', error);
   } finally {

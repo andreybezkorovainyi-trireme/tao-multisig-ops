@@ -8,9 +8,9 @@
     "multisig_address": "node src/multisig-generate-address.js",
     "multisig_balance": "node src/multisig-get-balance.js",
     "multisig_proxies": "node src/multisig-get-proxies.js",
-    "vote_proxy_A": "node src/multisig-vote-init-proxy.js A",
-    "vote_proxy_B": "node src/multisig-vote-init-proxy.js B",
-    "vote_proxy_C": "node src/multisig-vote-init-proxy.js C",
+    "vote_add_proxy_A": "node src/multisig-vote-init-proxy.js A",
+    "vote_add_proxy_B": "node src/multisig-vote-init-proxy.js B",
+    "vote_add_proxy_C": "node src/multisig-vote-init-proxy.js C",
     "vote_register_A": "node src/multisig-vote-register-wallet.js A",
     "vote_register_B": "node src/multisig-vote-register-wallet.js B",
     "vote_register_C": "node src/multisig-vote-register-wallet.js C",
@@ -18,7 +18,11 @@
     "vote_transfer_B": "node src/multisig-vote-transfer.js B",
     "vote_transfer_C": "node src/multisig-vote-transfer.js C",
     "proxy_execute": "node src/proxy-execute.js",
-    "check_deposits": "node src/multisig-check-deposits.js"
+    "check_deposits": "node src/multisig-check-deposits.js",
+    "diagnose_balance": "node src/multisig-diagnose-balance.js",
+    "vote_remove_proxy_A": "node src/multisig-vote-remove-proxy.js A",
+    "vote_remove_proxy_B": "node src/multisig-vote-remove-proxy.js B",
+    "vote_remove_proxy_C": "node src/multisig-vote-remove-proxy.js C"
   },
   "dependencies": {
     "@polkadot/api": "^16.4.8",
