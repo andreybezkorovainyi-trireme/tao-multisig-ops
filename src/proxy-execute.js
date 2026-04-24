@@ -30,6 +30,18 @@ async function proxyExecute() {
   const proxyWallet = keyring.addFromMnemonic(stakingProxySeedPhrase);
 
   const validatorHotkey = validatorHotkeyAddress ?? multisigAddress;
+  if (!validatorHotkeyAddress) {
+    console.warn(
+      '===============================================================================================',
+    );
+    console.warn(
+      'VALIDATOR_HOTKEY_ADDRESS is not set. The Multisig address will be used as the validator hotkey.',
+    );
+    console.warn(
+      '===============================================================================================',
+    );
+  }
+
   console.log('Validator Hotkey:', validatorHotkey);
 
   console.log(`👤 Proxy Wallet (Delegate): ${proxyWallet.address}`);

@@ -24,3 +24,6 @@ SIGNATORY_C_SEED_PHRASE=12 words seed phrase
 
 # Not taling part in voting, can be used by proxy owner for testing purposes
 STAKING_PROXY_SEED_PHRASE=12 words seed phrase
+
+# A validator hotkey address used for staking. The address below is owned by a public organization - General Bittensor (RoundTable21)
+VALIDATOR_HOTKEY_ADDRESS=5Ctb5JXbHN8bMqUBo1cSakEFaWm672tLMJCVttRh6N6tGsn9
