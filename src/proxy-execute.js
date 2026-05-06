@@ -29,8 +29,8 @@ async function proxyExecute() {
   const keyring = new Keyring({ type: 'sr25519' });
   const proxyWallet = keyring.addFromMnemonic(stakingProxySeedPhrase);
 
-  const validatorHotkey = validatorHotkeyAddress ?? multisigAddress;
-  if (!validatorHotkeyAddress) {
+  let validatorHotkey = validatorHotkeyAddress;
+  if (!validatorHotkey) {
     console.warn(
       '===============================================================================================',
     );
@@ -40,6 +40,7 @@ async function proxyExecute() {
     console.warn(
       '===============================================================================================',
     );
+    validatorHotkey = multisigAddress;
   }
 
   console.log('Validator Hotkey:', validatorHotkey);
